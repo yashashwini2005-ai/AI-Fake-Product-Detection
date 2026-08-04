@@ -7,7 +7,7 @@ def generate_qr(serial_number):
 
     qr = qrcode.make(serial_number)
 
-    file_name = f"qr_{serial_number}.png"
+    file_name = f"{serial_number}.png"
 
     file_path = os.path.join(folder, file_name)
 
@@ -17,5 +17,20 @@ def generate_qr(serial_number):
 
 
 if __name__ == "__main__":
-    qr_path = generate_qr("CERT12345")
-    print("QR created at:", qr_path)
+
+    serial_numbers = [
+        "SN1001",
+        "SN1002",
+        "SN1003",
+        "SN1004",
+        "SN1005",
+        "SN1006",
+        "SN1007",
+        "SN1008",
+        "SN1009",
+        "SN1010"
+    ]
+
+    for serial in serial_numbers:
+        path = generate_qr(serial)
+        print(f"✅ QR created: {path}")

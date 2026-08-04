@@ -1,38 +1,82 @@
 from flask import Flask, jsonify
-from blockchain import verify_product, get_product
+from flask_cors import CORS
+
+from blockchain import get_product
+
 
 app = Flask(__name__)
 
-# Home Route
+CORS(app)
+
+
 @app.route("/")
 def home():
+
     return jsonify({
-        "message": "Fake Product Detection Backend Running"
+
+        "message": "VeriChain Backend Running"
+
     })
 
 
-# Verify Product
 @app.route("/verify/<serial>", methods=["GET"])
 def verify(serial):
 
-    exists = verify_product(serial)
+    try:
 
-    if not exists:
+        # Single blockchain call
+        product = get_product(serial)
+
+
+        # Check if product exists
+        # Assuming your smart contract returns empty serial for non-existing product
+        if not product or product[0] == "":
+
+            return jsonify({
+
+                "status": "Fake",
+
+                "message": "Product not registered"
+
+            })
+
+
         return jsonify({
-            "exists": False,
-            "message": "Product not found"
+
+            "status": "Genuine",
+
+            "serialNumber": product[0],
+
+            "productName": product[1],
+
+            "manufacturer": product[2],
+
+            "batchNumber": product[3]
+
         })
 
-    product = get_product(serial)
 
-    return jsonify({
-        "exists": True,
-        "serialNumber": product[0],
-        "productName": product[1],
-        "manufacturer": product[2],
-        "batchNumber": product[3]
-    })
+    except Exception as e:
+
+
+        return jsonify({
+
+            "status": "error",
+
+            "message": str(e)
+
+        })
+
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+
+    app.run(
+
+        host="0.0.0.0",
+
+        port=5000,
+
+        debug=False
+
+    )
